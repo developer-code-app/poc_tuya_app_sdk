@@ -1,167 +1,178 @@
 PODS:
-  - SGQRCode (4.1.0)
-  - TuyaSmartActivatorCoreKit (4.0.0):
-    - TuyaSmartDeviceCoreKit (>= 4.0.0)
-    - TuyaSmartPairingCoreKit (>= 4.0.0)
-    - TuyaSmartUtil (>= 4.0.0)
-  - TuyaSmartActivatorKit (4.0.0):
-    - TuyaSmartActivatorCoreKit
-    - TuyaSmartDeviceKit
-  - TuyaSmartBaseKit (4.0.0):
-    - TuyaSmartMQTTChannelKit (>= 3.35.0)
-    - TuyaSmartNetworkKit (>= 3.32.0)
-    - TuyaSmartUtil (>= 3.35.0)
+  - ThingBluetooth (5.0.6):
+    - ThingSmartUtil (~> 5.0)
+  - ThingMbedtls (3.3.0)
+  - ThingOpenSSLSDK (1.1.1-t.0)
+  - ThingSmartActivatorCoreKit (5.2.3):
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+    - ThingSmartPairingCoreKit (~> 5.2)
+    - ThingSmartSocketChannelKit (~> 5.0)
+    - ThingSmartUtil (~> 5.2)
+  - ThingSmartActivatorKit (5.1.2):
+    - ThingSmartActivatorCoreKit (~> 5.2)
+    - ThingSmartDeviceKit (~> 5.0)
     - YYModel
-  - TuyaSmartBeaconKit (4.0.0):
-    - TuyaSmartBLECoreKit (>= 4.0.0)
-    - TuyaSmartDeviceCoreKit (>= 4.0.0)
-  - TuyaSmartBLECoreKit (4.0.1.2):
-    - TuyaSmartUtil (>= 4.0.0)
-    - TYBluetooth (< 10.0, >= 4.0.0)
+  - ThingSmartBaseKit (5.1.2):
+    - ThingSmartMQTTChannelKit (~> 5.0)
+    - ThingSmartNetworkKit (~> 5.0)
+    - ThingSmartUtil (~> 5.0)
     - YYModel
-  - TuyaSmartBLEKit (4.0.0.3):
-    - TuyaSmartBeaconKit (>= 4.0.0)
-    - TuyaSmartBLECoreKit (>= 4.0.0)
-    - TuyaSmartDeviceCoreKit (>= 4.0.0)
-    - TYBluetooth (< 10.0, >= 4.0.0)
-  - TuyaSmartBLEMeshKit (4.0.0):
-    - TuyaSmartActivatorCoreKit (>= 4.0.0)
-    - TuyaSmartDeviceCoreKit (>= 4.0.0)
-    - TYBluetooth (< 10.0, >= 4.0.0)
-  - TuyaSmartDeviceCoreKit (4.0.0.1):
-    - TuyaSmartBaseKit (>= 4.0.0)
-    - TuyaSmartMQTTChannelKit (>= 4.0.0)
-    - TuyaSmartSocketChannelKit (>= 4.0.0)
-    - TuyaSmartUtil (>= 4.0.0)
-  - TuyaSmartDeviceKit (4.2.9):
-    - TuyaSmartBaseKit
-    - TuyaSmartDeviceCoreKit (>= 3.38.0)
-    - TuyaSmartNetworkKit
-    - TuyaSmartShareKit (>= 3.36.0)
-  - TuyaSmartFeedbackKit (3.33.5):
-    - TuyaSmartBaseKit
-  - TuyaSmartHomeKit (4.0.1):
-    - TuyaSmartActivatorCoreKit (~> 4.0.0)
-    - TuyaSmartActivatorKit (~> 4.0.0)
-    - TuyaSmartBaseKit (~> 4.0.0)
-    - TuyaSmartBeaconKit (~> 4.0.0)
-    - TuyaSmartBLECoreKit (~> 4.0.1.2)
-    - TuyaSmartBLEKit (~> 4.0.0.1)
-    - TuyaSmartBLEMeshKit (~> 4.0.0)
-    - TuyaSmartDeviceCoreKit (~> 4.0.0)
-    - TuyaSmartDeviceKit (~> 4.2.7)
-    - TuyaSmartFeedbackKit (~> 3.33.5)
-    - TuyaSmartMessageKit (~> 3.35.6)
-    - TuyaSmartMQTTChannelKit (~> 4.0.0)
-    - TuyaSmartNetworkKit (~> 4.0.2)
-    - TuyaSmartPairingCoreKit (~> 4.0.1)
-    - TuyaSmartQUIC (~> 1.2.0)
-    - TuyaSmartSceneCoreKit (~> 3.39.5)
-    - TuyaSmartSceneKit (~> 3.33.6)
-    - TuyaSmartShareKit (~> 3.36.1)
-    - TuyaSmartSocketChannelKit (~> 4.0.0)
-    - TuyaSmartTimerKit (~> 3.33.0)
-    - TuyaSmartUtil (~> 4.0.0)
-    - TYBluetooth (~> 4.0.0)
-    - TYMbedtls (~> 2.25.2)
-  - TuyaSmartMessageKit (3.35.6):
-    - TuyaSmartBaseKit
-  - TuyaSmartMQTTChannelKit (4.0.0):
-    - TuyaSmartQUIC (>= 1.2.0)
-    - TuyaSmartUtil (>= 4.0.0)
-  - TuyaSmartNetworkKit (4.0.3):
-    - TuyaSmartUtil (>= 4.0.0)
+  - ThingSmartBeaconKit (5.0.2):
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartBLECoreKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+  - ThingSmartBLECoreKit (5.1.6):
+    - ThingBluetooth (< 10.0, ~> 5.0)
+    - ThingSmartUtil (~> 5.0)
     - YYModel
-  - TuyaSmartPairingCoreKit (4.0.2):
-    - TuyaSmartMQTTChannelKit (>= 4.0.0)
-    - TuyaSmartSocketChannelKit (>= 4.0.0)
-    - TuyaSmartUtil (>= 4.0.0)
+  - ThingSmartBLEKit (5.0.17):
+    - ThingBluetooth (< 10.0, ~> 5.0)
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartBeaconKit (~> 5.0)
+    - ThingSmartBLECoreKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+    - ThingSmartUtil (~> 5.0)
+  - ThingSmartBLEMeshKit (5.1.2):
+    - ThingBluetooth (< 10.0, ~> 5.0)
+    - ThingSmartActivatorCoreKit (~> 5.0)
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+  - ThingSmartCryption (5.0.0)
+  - ThingSmartDeviceCoreKit (5.1.3):
+    - ThingSmartMQTTChannelKit (~> 5.0)
+    - ThingSmartNetworkKit (~> 5.0)
+    - ThingSmartSocketChannelKit (~> 5.0)
+    - ThingSmartUtil (~> 5.1)
     - YYModel
-  - TuyaSmartQUIC (1.2.0)
-  - TuyaSmartSceneCoreKit (3.39.5):
-    - TuyaSmartBaseKit
-    - TuyaSmartDeviceCoreKit
-  - TuyaSmartSceneKit (3.33.6):
-    - TuyaSmartBaseKit
-    - TuyaSmartDeviceKit
-    - TuyaSmartSceneCoreKit
-  - TuyaSmartShareKit (3.36.1):
-    - TuyaSmartBaseKit (>= 3.32.0)
-    - TuyaSmartDeviceCoreKit (>= 3.36.0)
-  - TuyaSmartSocketChannelKit (4.0.0):
-    - TuyaSmartUtil (>= 4.0.0)
-  - TuyaSmartTimerKit (3.33.0):
-    - TuyaSmartBaseKit
-    - TuyaSmartDeviceCoreKit
-  - TuyaSmartUtil (4.0.0):
-    - TYMbedtls (>= 2.25.1)
-  - TYBluetooth (4.0.0):
-    - TuyaSmartUtil (>= 4.0.0)
-  - TYMbedtls (2.25.2)
+  - ThingSmartDeviceKit (5.3.0):
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+    - ThingSmartShareKit (~> 5.0)
+    - YYModel
+  - ThingSmartFeedbackKit (5.0.0):
+    - ThingSmartBaseKit (~> 5.0)
+    - YYModel
+  - ThingSmartHomeKit (5.1.0):
+    - ThingBluetooth (~> 5.0)
+    - ThingSmartActivatorCoreKit (~> 5.0)
+    - ThingSmartActivatorKit (~> 5.0)
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartBeaconKit (~> 5.0)
+    - ThingSmartBLECoreKit (~> 5.0)
+    - ThingSmartBLEKit (~> 5.0)
+    - ThingSmartBLEMeshKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+    - ThingSmartDeviceKit (~> 5.0)
+    - ThingSmartFeedbackKit (~> 5.0)
+    - ThingSmartMessageKit (~> 5.0)
+    - ThingSmartMQTTChannelKit (~> 5.0)
+    - ThingSmartNetworkKit (~> 5.0)
+    - ThingSmartPairingCoreKit (~> 5.0)
+    - ThingSmartSceneKit (~> 5.0)
+    - ThingSmartShareKit (~> 5.0)
+    - ThingSmartSocketChannelKit (~> 5.0)
+    - ThingSmartTimerKit (~> 5.0)
+  - ThingSmartMessageKit (5.0.0):
+    - ThingSmartBaseKit (~> 5.0)
+    - YYModel
+  - ThingSmartMQTTChannelKit (5.0.2):
+    - ThingSmartUtil (>= 5.0.0)
+  - ThingSmartNetworkKit (5.0.4):
+    - ThingSmartUtil (>= 5.0.0)
+    - YYModel
+  - ThingSmartPairingCoreKit (5.2.0):
+    - ThingSmartMQTTChannelKit (>= 5.0.0)
+    - ThingSmartSocketChannelKit (>= 5.0.0)
+    - ThingSmartUtil (>= 5.2.0)
+    - YYModel
+  - ThingSmartSceneCoreKit (5.1.0):
+    - ThingSmartBaseKit
+    - ThingSmartDeviceCoreKit
+    - YYModel
+  - ThingSmartSceneKit (5.1.0):
+    - ThingSmartBaseKit
+    - ThingSmartDeviceKit
+    - ThingSmartSceneCoreKit
+  - ThingSmartShareKit (5.1.0):
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+  - ThingSmartSocketChannelKit (5.0.3):
+    - ThingSmartUtil (>= 5.0.0)
+  - ThingSmartTimerKit (5.0.0):
+    - ThingSmartBaseKit (~> 5.0)
+    - ThingSmartDeviceCoreKit (~> 5.0)
+    - YYModel
+  - ThingSmartUtil (5.2.2):
+    - ThingMbedtls (= 3.3.0)
+    - ThingOpenSSLSDK (~> 1.1.1-t.0)
   - YYModel (1.0.4)
 
 DEPENDENCIES:
-  - SGQRCode (~> 4.1.0)
-  - TuyaSmartHomeKit (>= 4.0.0)
+  - ThingSmartCryption (from `./`)
+  - ThingSmartHomeKit
 
 SPEC REPOS:
   https://github.com/tuya/tuya-pod-specs.git:
-    - TuyaSmartActivatorCoreKit
-    - TuyaSmartActivatorKit
-    - TuyaSmartBaseKit
-    - TuyaSmartBeaconKit
-    - TuyaSmartBLECoreKit
-    - TuyaSmartBLEKit
-    - TuyaSmartBLEMeshKit
-    - TuyaSmartDeviceCoreKit
-    - TuyaSmartDeviceKit
-    - TuyaSmartHomeKit
-    - TuyaSmartMessageKit
-    - TuyaSmartMQTTChannelKit
-    - TuyaSmartNetworkKit
-    - TuyaSmartPairingCoreKit
-    - TuyaSmartQUIC
-    - TuyaSmartSceneCoreKit
-    - TuyaSmartShareKit
-    - TuyaSmartSocketChannelKit
-    - TuyaSmartUtil
-    - TYBluetooth
-    - TYMbedtls
+    - ThingBluetooth
+    - ThingMbedtls
+    - ThingOpenSSLSDK
+    - ThingSmartActivatorCoreKit
+    - ThingSmartActivatorKit
+    - ThingSmartBaseKit
+    - ThingSmartBeaconKit
+    - ThingSmartBLECoreKit
+    - ThingSmartBLEKit
+    - ThingSmartBLEMeshKit
+    - ThingSmartDeviceCoreKit
+    - ThingSmartDeviceKit
+    - ThingSmartFeedbackKit
+    - ThingSmartHomeKit
+    - ThingSmartMessageKit
+    - ThingSmartMQTTChannelKit
+    - ThingSmartNetworkKit
+    - ThingSmartPairingCoreKit
+    - ThingSmartSceneCoreKit
+    - ThingSmartSceneKit
+    - ThingSmartShareKit
+    - ThingSmartSocketChannelKit
+    - ThingSmartTimerKit
+    - ThingSmartUtil
   trunk:
-    - SGQRCode
-    - TuyaSmartFeedbackKit
-    - TuyaSmartSceneKit
-    - TuyaSmartTimerKit
     - YYModel
 
+EXTERNAL SOURCES:
+  ThingSmartCryption:
+    :path: "./"
+
 SPEC CHECKSUMS:
-  SGQRCode: 6ad664d63f38f2842503bc5087812c5a3136d924
-  TuyaSmartActivatorCoreKit: 1d82f98eb7c2fd3a2c9a66098d9d57f652805757
-  TuyaSmartActivatorKit: 8ddf405db0ff66b4adcfad48e4a7b14c8303d05b
-  TuyaSmartBaseKit: 34dd0724e38bce48866f4efe0e9acc17928cb13e
-  TuyaSmartBeaconKit: 1421013e4bcd753b6948cc4e858443ef22f46cad
-  TuyaSmartBLECoreKit: 8f5c590ce90963f846e6235d1fa4230942db28f7
-  TuyaSmartBLEKit: 8424ef26294fd828c635a20c9c4afc01baedb1ca
-  TuyaSmartBLEMeshKit: be141999eacf76260ab5be54942199af1de28f38
-  TuyaSmartDeviceCoreKit: 7085a4b78104a5263ec5e20a52b71556f50e3e59
-  TuyaSmartDeviceKit: fce524c6aff81ddb0c29051a4b14045087149038
-  TuyaSmartFeedbackKit: eb12d0767b9f09c6f765fbffa6e06e7f89ce9a90
-  TuyaSmartHomeKit: 5dc82fce660a4518c54db46061be3817401fb526
-  TuyaSmartMessageKit: f3547910e572c2485fe662fddda2f297f99f2390
-  TuyaSmartMQTTChannelKit: a804792d3925a9b002198ead904d79a28a9dca8c
-  TuyaSmartNetworkKit: 0d3f545a2094c802a094ed4f2bc93fb1771dbea5
-  TuyaSmartPairingCoreKit: 46367524705bfdfbfa9bcc61beac407d6377c0d9
-  TuyaSmartQUIC: 3fdc0901db8b361f31b00ef851614abbef8b2821
-  TuyaSmartSceneCoreKit: a2101a94544d92aee45ab981d36a3e0f3f48b64c
-  TuyaSmartSceneKit: 1f9cecad018120047200e4c6d81b5732c2690785
-  TuyaSmartShareKit: bf0988186342440fb24d158bbf84b9b5551cb432
-  TuyaSmartSocketChannelKit: ad8bd09ca5f156cb4151a158632aa11adfe551b7
-  TuyaSmartTimerKit: f3bd2c93136edca6d59855c959127992627657fc
-  TuyaSmartUtil: a37801de8e0e6692bce414960e91935d09574a13
-  TYBluetooth: 1c7438b5425d4aece2d6f531bf85f05118925f34
-  TYMbedtls: 27c6957b03205e1706c48f9f686a7c48d8f90524
+  ThingBluetooth: e627b6085bb5f7e8bb60d00bce43ac0e1ceb2872
+  ThingMbedtls: a42a29e38d4d71200fe388fd53828835c7a70385
+  ThingOpenSSLSDK: a60175b6a0c51167367e6748ed63f9fcc56aef4f
+  ThingSmartActivatorCoreKit: 3927a23c7db78aae0f054802f24bfb0929cf5eb9
+  ThingSmartActivatorKit: dfcbf3f92edde675b231bc8acbd97af8e330f409
+  ThingSmartBaseKit: 03be244b07fe211cb9902c1dc941f54ad704781e
+  ThingSmartBeaconKit: 3e7e2cf980d46f8feb73d603ce891ba253704483
+  ThingSmartBLECoreKit: a329e397e74fa27c2bb8cff579057e1bc5e35b3d
+  ThingSmartBLEKit: 87d2266a67022a7e9435ee010a671e1cbde113f7
+  ThingSmartBLEMeshKit: c79098cf33f9b068d3396e34e5f5c2c3d9249483
+  ThingSmartCryption: ffdb949c0ffa29c07d2c0e0e79bd27c29d59412d
+  ThingSmartDeviceCoreKit: 3ead3af2d31b6b7be0cc264d95fa4d2968b52a23
+  ThingSmartDeviceKit: 597f7180cdf54ffdab35e30e2921b27cff1e00ed
+  ThingSmartFeedbackKit: 86c42f4925c44de77967b4d3e0cd8e28e399ea05
+  ThingSmartHomeKit: 5ac333958484d163d2230c14ad0df5d692057c2f
+  ThingSmartMessageKit: 0552bd8f07c08744f2013fb9996b8192b5a1cf2e
+  ThingSmartMQTTChannelKit: 48ee550a9f6ae97eb1a8f25ed6ae9155a7b6cbf9
+  ThingSmartNetworkKit: 4060c0021fc6592e9692be98e2fd79fb00943113
+  ThingSmartPairingCoreKit: b3a2dbdb6e22b870da58b695187c1442da1d8d24
+  ThingSmartSceneCoreKit: 43c6bbf0bd9a12930d9c9f48e03c2f7b7262ee62
+  ThingSmartSceneKit: 31532a825959126744bb6ae1d936dadeaeb764d2
+  ThingSmartShareKit: 057aa02ff44b9c7069aba6cb9a7674308e1bf6f1
+  ThingSmartSocketChannelKit: c9d0f3db7782b7be3a515c34a66bf32898c6ab28
+  ThingSmartTimerKit: a4c2852403737f6f82d7b4cc30b90c6ef66ff480
+  ThingSmartUtil: 91463e6291d941b91112096637c36cbc95650295
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 85fe90a03221f2b85220cd2839b8cc4ebefd309a
+PODFILE CHECKSUM: 0d8fea3a762e1d9fc9cb67ea3eb985270ef14045
 
 COCOAPODS: 1.12.1

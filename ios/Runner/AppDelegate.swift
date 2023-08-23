@@ -1,5 +1,5 @@
 import UIKit
-import Flutter
+import ThingSmartBaseKit
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -23,40 +23,48 @@ import Flutter
       }
     })
 
+     ThingSmartSDK.sharedInstance().start(withAppKey: AppKey.appKey, secretKey: AppKey.secretKey)
+
+     #if DEBUG
+       TuyaSmartSDK.sharedInstance().debugMode = true
+     #endif
+      
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
   private func loginWithEmail(call: FlutterMethodCall, result: @escaping FlutterResult) {
-      guard
-        let args = call.arguments as? Dictionary<String, Any>,
-        let countryCode = args["country_code"] as? String,
-        let email = args["email"] as? String,
-        let password = args["password"] as? String
-      else {
-        let flutterError = FlutterError(
-          code: "ARGUMENTS_ERROR",
-          message: "Arguments missing.",
-          details: nil
-        );
-          
-        return result(flutterError)
-      }
-      
-      TuyaSmartUser.sharedInstance().login(
-        byEmail: countryCode,
-        email: email,
-        password: password
-      ) {
-        result("login success");
-      } failure: { error in
-        let flutterError = FlutterError(
-          code: "TUYA_LOGIN_ERROR",
-          message: error?.localizedDescription,
-          details: nil
-        );
-          
-        result(flutterError)
-      }
+    print("login smart lift sdk");
+    
+//      guard
+//        let args = call.arguments as? Dictionary<String, Any>,
+//        let countryCode = args["country_code"] as? String,
+//        let email = args["email"] as? String,
+//        let password = args["password"] as? String
+//      else {
+//        let flutterError = FlutterError(
+//          code: "ARGUMENTS_ERROR",
+//          message: "Arguments missing.",
+//          details: nil
+//        );
+//
+//        return result(flutterError)
+//      }
+//
+//       TuyaSmartUser.sharedInstance().login(
+//         byEmail: countryCode,
+//         email: email,
+//         password: password
+//       ) {
+//         result("login success");
+//       } failure: { error in
+//         let flutterError = FlutterError(
+//           code: "TUYA_LOGIN_ERROR",
+//           message: error?.localizedDescription,
+//           details: nil
+//         );
+//
+//         result(flutterError)
+//       }
   }
 }
