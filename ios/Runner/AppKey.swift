@@ -8,6 +8,6 @@
 import Foundation
 
 struct AppKey {
-    static let appKey = "tcx4a9sa5n8k5he7y3x4"
-    static let secretKey = "eduxx9k7uwq759chr4j75secrwcdk4km"
+    static let appKey = "9gkqeyckm39umcm5h9am"
+    static let secretKey = "s584kn3e5aujfuut3wwe9fkvasfc34we"
 }

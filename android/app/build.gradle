@@ -26,6 +26,15 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'smart-lift-sdk-debug'
+            storeFile file('/Users/codeapp/Codeapp/POC/poc_flutter_smart_lift_sdk/android/tuya.jks')
+            storePassword '9code7app9'
+            keyPassword '9code7app9'
+        }
+    }
+
     namespace "com.example.poc_flutter_smart_lift_sdk"
     compileSdkVersion 34
     compileOptions {
@@ -69,8 +78,7 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
     }

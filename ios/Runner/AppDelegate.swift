@@ -1,4 +1,5 @@
 import UIKit
+import Flutter
 import ThingSmartBaseKit
 
 @UIApplicationMain
@@ -7,12 +8,29 @@ import ThingSmartBaseKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    setupTuyaSmartLife()
+    setupMethodCall()
+      
+    GeneratedPluginRegistrant.register(with: self)
+      
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  private func setupTuyaSmartLife() {
+    ThingSmartSDK.sharedInstance().start(withAppKey: AppKey.appKey, secretKey: AppKey.secretKey)
+
+    #if DEBUG
+      TuyaSmartSDK.sharedInstance().debugMode = true
+    #endif
+  }
+  
+  private func setupMethodCall() {
     let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
     let channel = FlutterMethodChannel(
       name: "com.code-app/poc-smart-lift-sdk-flutter",
       binaryMessenger: controller.binaryMessenger
     )
-    
+      
     channel.setMethodCallHandler({
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       switch call.method {
@@ -22,49 +40,38 @@ import ThingSmartBaseKit
         result(FlutterMethodNotImplemented)
       }
     })
-
-     ThingSmartSDK.sharedInstance().start(withAppKey: AppKey.appKey, secretKey: AppKey.secretKey)
-
-     #if DEBUG
-       TuyaSmartSDK.sharedInstance().debugMode = true
-     #endif
-      
-    GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-
+  
   private func loginWithEmail(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    print("login smart lift sdk");
-    
-//      guard
-//        let args = call.arguments as? Dictionary<String, Any>,
-//        let countryCode = args["country_code"] as? String,
-//        let email = args["email"] as? String,
-//        let password = args["password"] as? String
-//      else {
-//        let flutterError = FlutterError(
-//          code: "ARGUMENTS_ERROR",
-//          message: "Arguments missing.",
-//          details: nil
-//        );
-//
-//        return result(flutterError)
-//      }
-//
-//       TuyaSmartUser.sharedInstance().login(
-//         byEmail: countryCode,
-//         email: email,
-//         password: password
-//       ) {
-//         result("login success");
-//       } failure: { error in
-//         let flutterError = FlutterError(
-//           code: "TUYA_LOGIN_ERROR",
-//           message: error?.localizedDescription,
-//           details: nil
-//         );
-//
-//         result(flutterError)
-//       }
+    guard
+      let args = call.arguments as? Dictionary<String, Any>,
+      let countryCode = args["country_code"] as? String,
+      let email = args["email"] as? String,
+      let password = args["password"] as? String
+    else {
+      let flutterError = FlutterError(
+        code: "ARGUMENTS_ERROR",
+        message: "Arguments missing.",
+        details: nil
+      );
+
+      return result(flutterError)
+    }
+      
+    ThingSmartUser.sharedInstance().login(
+      byEmail: countryCode,
+      email: email,
+      password: password
+    ) {
+      result("Success");
+    } failure: { error in
+      let flutterError = FlutterError(
+        code: "LOGIN_ERROR",
+        message: error?.localizedDescription,
+        details: nil
+      );
+  
+      result(flutterError)
+    }
   }
 }
