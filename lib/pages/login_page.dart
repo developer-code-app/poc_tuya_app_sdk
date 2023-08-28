@@ -1,5 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poc_flutter_smart_lift_sdk/alert_dialog_cubit.dart';
+import 'package:poc_flutter_smart_lift_sdk/models/user.dart';
+import 'package:poc_flutter_smart_lift_sdk/pages/home_page.dart';
+import 'package:poc_flutter_smart_lift_sdk/repositories/tuya_repository.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,10 +15,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  static const platform = MethodChannel(
-    'com.code-app/poc-smart-lift-sdk-flutter',
-  );
-
   final countryCodeTextController = TextEditingController();
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
@@ -61,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 36),
                     TextButton(
                       child: const Text('Login'),
-                      onPressed: () => _loginWithEmail(),
+                      onPressed: () => _loginWithEmail(context),
                     ),
                   ],
                 ),
@@ -73,19 +75,29 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _loginWithEmail() async {
+  Future<void> _loginWithEmail(BuildContext context) async {
+    final repository = context.read<TuyaRepository>();
+    final alertDialogCubit = context.read<AlertDialogCubit>();
+
     try {
-      final result = await platform.invokeMethod(
-        'loginWithEmail',
-        {
-          'country_code': countryCodeTextController.text,
-          'email': emailTextController.text,
-          'password': passwordTextController.text,
-        },
+      final user = await repository.loginWithEmail(
+        countryCode: countryCodeTextController.text,
+        email: emailTextController.text,
+        password: passwordTextController.text,
       );
-      print('result: $result');
-    } on PlatformException catch (error) {
-      print('error: ${error.message}');
+
+      navigationToHomePage(user: user);
+    } on Exception catch (error) {
+      alertDialogCubit.errorAlert(error: error);
     }
+  }
+
+  void navigationToHomePage({required User user}) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(user: user),
+      ),
+    );
   }
 }
