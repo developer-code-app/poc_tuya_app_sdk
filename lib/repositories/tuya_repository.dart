@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:poc_flutter_smart_lift_sdk/models/device.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/home.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/user.dart';
 
@@ -87,5 +88,38 @@ class TuyaRepository {
     };
 
     return await methodChannel.invokeMethod('removeHome', argument);
+  }
+
+  Future<List<Device>> fetchDevices({required String homeId}) async {
+    final argument = {
+      'home_id': homeId,
+    };
+
+    return await methodChannel
+        .invokeMethod<List>('fetchDevices', argument)
+        .then((response) =>
+            response?.map((device) => Device.fromMap(device)).toList() ?? []);
+  }
+
+  Future<String> editDevice({
+    required String deviceId,
+    required String name,
+  }) async {
+    final argument = {
+      'home_id': deviceId,
+      'name': name,
+    };
+
+    return await methodChannel
+        .invokeMethod('editDevice', argument)
+        .then((response) => response.toString());
+  }
+
+  Future<void> removeDevice({required String deviceId}) async {
+    final argument = {
+      'device_id': deviceId,
+    };
+
+    return await methodChannel.invokeMethod('removeDevice', argument);
   }
 }

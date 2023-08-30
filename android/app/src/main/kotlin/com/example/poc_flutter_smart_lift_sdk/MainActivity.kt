@@ -34,6 +34,9 @@ class MainActivity: FlutterActivity() {
                 "addHome" -> addHome(call, result)
                 "editHome" -> editHome(call, result)
                 "removeHome" -> removeHome(call, result)
+                "fetchDevices" -> fetchDevices(call, result)
+                "editDevice" -> editDevice(call, result)
+                "removeDevice" -> removeDevice(call, result)
                 else -> result.notImplemented()
             }
         }
@@ -218,6 +221,87 @@ class MainActivity: FlutterActivity() {
                         error,
                         null
                     )
+                }
+            })
+        } else {
+            result.error(
+                "ARGUMENTS_ERROR",
+                "Arguments missing.",
+                null
+            )
+        }
+    }
+
+    private fun fetchDevices(call: MethodCall, result: MethodChannel.Result) {
+        val homeId = call.argument<String>("home_id")?.toLongOrNull()
+
+        if (homeId != null) {
+            val devices = ThingHomeSdk.newHomeInstance(homeId).homeBean.deviceList.map { device ->
+                val roomName = ThingHomeSdk.getDataInstance().getDeviceRoomBean(device.getDevId())?.name ?: ""
+
+                hashMapOf(
+                    "device_id" to device.devId,
+                    "name" to device.getName(),
+                    "room_name" to roomName,
+                )
+            }
+
+            result.success(devices)
+        } else {
+            result.error(
+                "ARGUMENTS_ERROR",
+                "Arguments missing.",
+                null
+            )
+        }
+    }
+
+    private fun editDevice(call: MethodCall, result: MethodChannel.Result) {
+        val deviceId = call.argument<String>("device_id")
+        val name = call.argument<String>("name")
+
+        if (deviceId != null && name != null) {
+            val device = ThingHomeSdk.newDeviceInstance(deviceId)
+
+            device.renameDevice(name, object : IResultCallback {
+                override fun onError(code: String, error: String) {
+                    result.error(
+                        code,
+                        error,
+                        null
+                    )
+                }
+
+                override fun onSuccess() {
+                    result.success("SUCCESS")
+                    // The device is renamed successfully.
+                }
+            })
+        } else {
+            result.error(
+                "ARGUMENTS_ERROR",
+                "Arguments missing.",
+                null
+            )
+        }
+    }
+    private fun removeDevice(call: MethodCall, result: MethodChannel.Result) {
+        val deviceId = call.argument<String>("device_id")
+
+
+        if (deviceId != null) {
+            val device = ThingHomeSdk.newDeviceInstance(deviceId)
+
+            device.removeDevice(object : IResultCallback {
+                override fun onError(errorCode: String, errorMsg: String) {
+                    result.error(
+                        errorCode,
+                        errorMsg,
+                        null
+                    )
+                }
+                override fun onSuccess() {
+                    result.success("SUCCESS")
                 }
             })
         } else {

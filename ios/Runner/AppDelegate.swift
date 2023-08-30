@@ -51,6 +51,12 @@ import ThingSmartDeviceKit
         self.editHome(call: call, result: result)
       case "removeHome":
         self.removeHome(call: call, result: result)
+      case "fetchDevices":
+        self.fetchDevices(call: call, result: result)
+      case "editDevice":
+        self.editDevice(call: call, result: result)
+      case "removeDevice":
+        self.removeDevice(call: call, result: result)
       default:
         result(FlutterMethodNotImplemented)
       }
@@ -262,6 +268,99 @@ import ThingSmartDeviceKit
         }, failure: { (error) in
             let flutterError = FlutterError(
               code: "REMOVE_HOMES_ERROR",
+              message: error?.localizedDescription,
+              details: nil
+            );
+        
+            result(flutterError)
+        })
+    }
+    
+    private func fetchDevices(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard
+          let args = call.arguments as? Dictionary<String, Any>,
+          let homeIdString = args["home_id"] as? String,
+          let homeId = Int64(homeIdString)
+        else {
+          let flutterError = FlutterError(
+            code: "ARGUMENTS_ERROR",
+            message: "Arguments missing.",
+            details: nil
+          );
+
+          return result(flutterError)
+        }
+        
+        let home = ThingSmartHome(homeId: homeId);
+        let devices = home?.deviceList ?? [];
+        let rooms = home?.roomList ?? [];
+
+        
+        
+        result(
+            devices.map { device in
+                let roomName = rooms.first(where: { $0.roomId == device.roomId})?.name ?? "";
+                
+                return [
+                    "device_id": device.devId!,
+                    "room_name": roomName,
+                    "name": device.name!,
+                ];
+            }
+        );
+    }
+    
+    private func editDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard
+          let args = call.arguments as? Dictionary<String, Any>,
+          let deviceId = args["device_id"] as? String,
+          let name = args["name"] as? String
+        else {
+          let flutterError = FlutterError(
+            code: "ARGUMENTS_ERROR",
+            message: "Arguments missing.",
+            details: nil
+          );
+
+          return result(flutterError)
+        }
+        
+        let device = ThingSmartDevice(deviceId: deviceId)
+        
+        device?.updateName(name, success: {
+            result(name);
+        }, failure: { (error) in
+            let flutterError = FlutterError(
+              code: "EDIT_DEVICE_ERROR",
+              message: error?.localizedDescription,
+              details: nil
+            );
+        
+            result(flutterError)
+        })
+    }
+    
+    private func removeDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard
+          let args = call.arguments as? Dictionary<String, Any>,
+          let deviceId = args["device_id"] as? String
+        else {
+          let flutterError = FlutterError(
+            code: "ARGUMENTS_ERROR",
+            message: "Arguments missing.",
+            details: nil
+          );
+
+          return result(flutterError)
+        }
+        
+        let device = ThingSmartDevice(deviceId: deviceId)
+        
+        device?.remove({
+            result("SUCCESS")
+        }, failure: { (error) in
+            let flutterError = FlutterError(
+              code: "REMOVE_DEVICE_ERROR",
               message: error?.localizedDescription,
               details: nil
             );

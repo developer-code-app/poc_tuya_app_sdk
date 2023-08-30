@@ -15,9 +15,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final countryCodeTextController = TextEditingController();
-  final emailTextController = TextEditingController();
-  final passwordTextController = TextEditingController();
+  final countryCodeTextController = TextEditingController(text: '66');
+  final emailTextController =
+      TextEditingController(text: 'pattarapon@code-app.com');
+  final passwordTextController = TextEditingController(text: 'qweasd');
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void navigationToHomePage({required User user}) {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => HomePage(user: user),

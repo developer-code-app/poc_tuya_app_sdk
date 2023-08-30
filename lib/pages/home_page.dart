@@ -1,10 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:dfunc/dfunc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intersperse/intersperse.dart';
 import 'package:poc_flutter_smart_lift_sdk/alert_dialog_cubit.dart';
 import 'package:poc_flutter_smart_lift_sdk/extensions/alert_dialog_convenience_showing.dart';
+import 'package:poc_flutter_smart_lift_sdk/models/device.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/home.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/project.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/user.dart';
@@ -30,9 +31,13 @@ class _HomePageState extends State<HomePage> {
     longitude: 100.432558,
   );
 
+  Home? currentHome;
+
   bool isEditingHomeList = false;
   List<Home> homes = [];
-  Home? currentHome;
+
+  bool isEditingDeviceList = false;
+  List<Device> devices = [];
 
   @override
   void initState() {
@@ -54,6 +59,8 @@ class _HomePageState extends State<HomePage> {
           const Divider(height: 32),
           _buildHomeListSection(context),
           const Divider(height: 32),
+          _buildDeviceListSection(context),
+          const Divider(height: 32),
         ],
       ),
     );
@@ -62,6 +69,7 @@ class _HomePageState extends State<HomePage> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       title: const Text('Poc Smart Lift SDK'),
+      automaticallyImplyLeading: false,
       actions: [
         TextButton(
           child: const Text('Log Out'),
@@ -218,6 +226,8 @@ class _HomePageState extends State<HomePage> {
                   setState(() {
                     currentHome = home;
                   });
+
+                  _fetchDevices(homeId: home.homeId);
                 },
                 child: Container(
                   color: Colors.transparent,
@@ -246,10 +256,7 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.red,
                             ),
                           ),
-                          onTap: () => _removeHome(
-                            context,
-                            homeId: home.homeId,
-                          ),
+                          onTap: () => _removeHome(homeId: home.homeId),
                         ),
                       ],
                       if (home.homeId == currentHome?.homeId &&
@@ -265,6 +272,109 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+              ),
+            )
+            .intersperse(const SizedBox(height: 12))
+            .toList(),
+      ],
+    );
+  }
+
+  Widget _buildDeviceListSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text(
+              'Device List',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            if (isEditingDeviceList)
+              GestureDetector(
+                child: const Text(
+                  'Done',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                ),
+                onTap: () => setState(() {
+                  isEditingDeviceList = false;
+                }),
+              )
+            else ...[
+              GestureDetector(
+                child: const Text(
+                  'Add',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                ),
+                onTap: () {},
+              ),
+              const SizedBox(width: 16),
+              GestureDetector(
+                child: const Text(
+                  'Edit',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                ),
+                onTap: () => setState(() {
+                  isEditingDeviceList = true;
+                }),
+              )
+            ]
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...devices
+            .map<Widget>(
+              (device) => Row(
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        device.name,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        device.roomName,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  if (isEditingDeviceList) ...[
+                    const Spacer(),
+                    GestureDetector(
+                      child: const Text(
+                        'Rename',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      onTap: () =>
+                          showEditDeviceAlertDialog(context, device: device),
+                    ),
+                    const SizedBox(width: 16),
+                    GestureDetector(
+                      child: const Text(
+                        'Remove',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.red,
+                        ),
+                      ),
+                      onTap: () => _removeDevice(deviceId: device.deviceId),
+                    ),
+                  ],
+                ],
               ),
             )
             .intersperse(const SizedBox(height: 12))
@@ -353,6 +463,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void showEditDeviceAlertDialog(BuildContext context,
+      {required Device device}) {
+    final nameController = TextEditingController(text: device.name);
+
+    AlertDialogConvenienceShowing.showAlertDialog(
+      context: context,
+      title: 'Edit Device',
+      inputField: Column(
+        children: [
+          TextField(
+            controller: nameController,
+            decoration: const InputDecoration(labelText: 'Device Name'),
+          ),
+        ],
+      ),
+      actions: [
+        AlertAction('Cancel'),
+        AlertAction('Edit', onPressed: () {
+          _editDevice(
+            deviceId: device.deviceId,
+            name: nameController.text,
+          );
+        }),
+      ],
+    );
+  }
+
   //MARK: Repository
 
   Future<void> _updateNickname(
@@ -380,7 +517,7 @@ class _HomePageState extends State<HomePage> {
     try {
       await repository.logout();
 
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const LoginPage(),
@@ -402,6 +539,8 @@ class _HomePageState extends State<HomePage> {
         this.homes = homes;
         currentHome = homes.firstOrNull;
       });
+
+      currentHome?.let((home) => _fetchDevices(homeId: home.homeId));
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
     }
@@ -454,10 +593,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _removeHome(
-    BuildContext context, {
-    required String homeId,
-  }) async {
+  Future<void> _removeHome({required String homeId}) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
 
@@ -465,6 +601,53 @@ class _HomePageState extends State<HomePage> {
       await repository.removeHome(homeId: homeId);
 
       _fetchHomes();
+    } on Exception catch (error) {
+      alertDialogCubit.errorAlert(error: error);
+    }
+  }
+
+  Future<void> _fetchDevices({required String homeId}) async {
+    final repository = context.read<TuyaRepository>();
+    final alertDialogCubit = context.read<AlertDialogCubit>();
+
+    try {
+      final devices = await repository.fetchDevices(homeId: homeId);
+
+      setState(() {
+        this.devices = devices;
+      });
+    } on Exception catch (error) {
+      alertDialogCubit.errorAlert(error: error);
+    }
+  }
+
+  Future<void> _editDevice({
+    required String deviceId,
+    required String name,
+  }) async {
+    final repository = context.read<TuyaRepository>();
+    final alertDialogCubit = context.read<AlertDialogCubit>();
+
+    try {
+      await repository.editDevice(
+        deviceId: deviceId,
+        name: name,
+      );
+
+      currentHome?.let((home) => _fetchDevices(homeId: home.homeId));
+    } on Exception catch (error) {
+      alertDialogCubit.errorAlert(error: error);
+    }
+  }
+
+  Future<void> _removeDevice({required String deviceId}) async {
+    final repository = context.read<TuyaRepository>();
+    final alertDialogCubit = context.read<AlertDialogCubit>();
+
+    try {
+      await repository.removeDevice(deviceId: deviceId);
+
+      currentHome?.let((home) => _fetchDevices(homeId: home.homeId));
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
     }

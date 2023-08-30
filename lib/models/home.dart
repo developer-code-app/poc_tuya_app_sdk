@@ -6,7 +6,7 @@ class Home {
 
   factory Home.fromMap(Map map) {
     return Home(
-      homeId: map['home_id'].toString(),
+      homeId: map['home_id'],
       name: map['name'],
     );
   }
