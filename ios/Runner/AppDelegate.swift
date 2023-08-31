@@ -2,11 +2,14 @@ import UIKit
 import Flutter
 import ThingSmartBaseKit
 import ThingSmartDeviceKit
+import ThingSmartActivatorKit
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate {
-    let homeManager = ThingSmartHomeManager()
-    
+@objc class AppDelegate: FlutterAppDelegate, ThingSmartActivatorDelegate  {
+    let tuyaActivator = ThingSmartActivator()
+    var pairingMethodCall: FlutterMethodCall?
+    var pairingResult: FlutterResult?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -21,7 +24,7 @@ import ThingSmartDeviceKit
 
   private func setupTuyaSmartLife() {
     ThingSmartSDK.sharedInstance().start(withAppKey: AppKey.appKey, secretKey: AppKey.secretKey)
-
+      
     #if DEBUG
       TuyaSmartSDK.sharedInstance().debugMode = true
     #endif
@@ -57,6 +60,18 @@ import ThingSmartDeviceKit
         self.editDevice(call: call, result: result)
       case "removeDevice":
         self.removeDevice(call: call, result: result)
+      case "fetchPairingToken":
+        self.fetchPairingToken(call: call, result: result)
+      case "startPairingDeviceWithAPMode":
+        self.startPairingDeviceWithAPMode(call: call, result: result)
+      case "startPairingDeviceWithEZMode":
+        self.startPairingDeviceWithEZMode(call: call, result: result)
+      case "startPairingDeviceWithZigbeeGateway":
+        self.startPairingDeviceWithZigbeeGateway(call: call, result: result)
+      case "startPairingDeviceWithSubDevices":
+        self.startPairingDeviceWithSubDevices(call: call, result: result)
+      case "stopPairingDevice":
+        self.stopPairingDevice(call: call, result: result)
       default:
         result(FlutterMethodNotImplemented)
       }
@@ -148,7 +163,7 @@ import ThingSmartDeviceKit
     }
     
     private func fetchHomes(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        homeManager.getHomeList(success: { (homes) in
+        ThingSmartHomeManager().getHomeList(success: { (homes) in
             if let homes = homes {
                 let _homes = homes.map { home in
                     [
@@ -190,7 +205,7 @@ import ThingSmartDeviceKit
           return result(flutterError)
         }
         
-        homeManager.addHome(withName: name,
+        ThingSmartHomeManager().addHome(withName: name,
                              geoName: location,
                                rooms: rooms,
                             latitude: latitude,
@@ -292,22 +307,28 @@ import ThingSmartDeviceKit
         }
         
         let home = ThingSmartHome(homeId: homeId);
-        let devices = home?.deviceList ?? [];
-        let rooms = home?.roomList ?? [];
+        
+        home?.getDataWithSuccess({ homeModle in
+            let devices = home?.deviceList ?? []
 
-        
-        
-        result(
-            devices.map { device in
-                let roomName = rooms.first(where: { $0.roomId == device.roomId})?.name ?? "";
-                
-                return [
-                    "device_id": device.devId!,
-                    "room_name": roomName,
-                    "name": device.name!,
-                ];
-            }
-        );
+            result(
+                devices.map { device in
+                    return [
+                        "device_id": device.devId!,
+                        "name": device.name!,
+                        "is_zig_bee_wifi": device.deviceType == ThingSmartDeviceModelTypeZigbeeGateway,
+                    ];
+                }
+            );
+        }, failure: { error in
+            let flutterError = FlutterError(
+              code: "HOME_NOT_FOUND",
+              message: "Arguments missing.",
+              details: nil
+            );
+
+            return result(flutterError)
+        })
     }
     
     private func editDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -367,5 +388,172 @@ import ThingSmartDeviceKit
         
             result(flutterError)
         })
+    }
+    
+    private func fetchPairingToken(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard
+          let args = call.arguments as? Dictionary<String, Any>,
+          let homeIdString = args["home_id"] as? String,
+          let homeId = Int64(homeIdString)
+        else {
+          let flutterError = FlutterError(
+            code: "ARGUMENTS_ERROR",
+            message: "Arguments missing.",
+            details: nil
+          );
+
+          return result(flutterError)
+        }
+        
+        tuyaActivator.getTokenWithHomeId(homeId, success: { token in
+            result(token)
+        }, failure: { error in
+            let flutterError = FlutterError(
+              code: "GET_TOKEN_ERROR",
+              message: error?.localizedDescription,
+              details: nil
+            );
+        
+            result(flutterError)
+        })
+    }
+    
+    private func startPairingDeviceWithAPMode(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard
+          let args = call.arguments as? Dictionary<String, Any>,
+          let ssid = args["ssid"] as? String,
+            let password = args["password"] as? String,
+            let token = args["token"] as? String,
+            let timeout = args["time_out"] as? Int?
+        else {
+          let flutterError = FlutterError(
+            code: "ARGUMENTS_ERROR",
+            message: "Arguments missing.",
+            details: nil
+          );
+
+          return result(flutterError)
+        }
+     
+        pairingMethodCall = call
+        pairingResult = result
+        tuyaActivator.delegate = self
+        tuyaActivator.startConfigWiFi(
+            .AP,
+            ssid: ssid,
+            password: password,
+            token: token,
+            timeout: TimeInterval(timeout ?? 200)
+        )
+    }
+    
+    private func startPairingDeviceWithEZMode(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard
+          let args = call.arguments as? Dictionary<String, Any>,
+          let ssid = args["ssid"] as? String,
+            let password = args["password"] as? String,
+            let token = args["token"] as? String,
+            let timeout = args["time_out"] as? Int?
+        else {
+          let flutterError = FlutterError(
+            code: "ARGUMENTS_ERROR",
+            message: "Arguments missing.",
+            details: nil
+          );
+
+          return result(flutterError)
+        }
+     
+        pairingMethodCall = call
+        pairingResult = result
+        tuyaActivator.delegate = self
+        tuyaActivator.startConfigWiFi(
+            .EZ,
+            ssid: ssid,
+            password: password,
+            token: token,
+            timeout: TimeInterval(timeout ?? 200)
+        )
+    }
+    
+    private func startPairingDeviceWithZigbeeGateway(
+        call: FlutterMethodCall,
+        result: @escaping FlutterResult
+    ) {
+        guard
+            let arguments = pairingMethodCall?.arguments as? Dictionary<String, Any>,
+            let token = arguments["token"] as? String,
+            let timeout = arguments["time_out"] as? Int?
+        else {
+            pairingResult?(
+                FlutterError(
+                  code: "ARGUMENTS_ERROR",
+                  message: "Arguments missing.",
+                  details: nil
+                )
+            )
+
+            return
+        }
+        
+        pairingMethodCall = call
+        pairingResult = result
+        tuyaActivator.delegate = self
+        tuyaActivator.startConfigWiFi(
+            withToken: token,
+            timeout: TimeInterval(timeout ?? 200)
+        )
+    }
+
+    private func startPairingDeviceWithSubDevices(
+        call: FlutterMethodCall,
+        result: @escaping FlutterResult
+    ) {
+        guard
+            let arguments = pairingMethodCall?.arguments as? Dictionary<String, Any>,
+            let gatewayId = arguments["gateway_id"] as? String,
+            let timeout = arguments["time_out"] as? Int?
+        else {
+            pairingResult?(
+                FlutterError(
+                  code: "ARGUMENTS_ERROR",
+                  message: "Arguments missing.",
+                  details: nil
+                )
+            )
+
+            return
+        }
+        
+        pairingMethodCall = call
+        pairingResult = result
+        tuyaActivator.delegate = self
+        tuyaActivator.activeSubDevice(
+            withGwId: gatewayId,
+            timeout: TimeInterval(timeout ?? 200)
+        )
+    }
+    
+    private func stopPairingDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        pairingMethodCall = nil
+        pairingResult = nil
+        tuyaActivator.delegate = nil
+        tuyaActivator.stopConfigWiFi()
+    }
+    
+    func activator(_ activator: ThingSmartActivator!, didReceiveDevice deviceModel: ThingSmartDeviceModel!, error: Error!) {
+        if deviceModel != nil && error == nil {
+            pairingResult?("SUCCESS")
+        }
+        
+        if let error = error {
+            let flutterError = FlutterError(
+              code: "PAIRING_ERROR",
+              message: error.localizedDescription,
+              details: nil
+            );
+        
+            pairingResult?(flutterError)
+        }
     }
 }

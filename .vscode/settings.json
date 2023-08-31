@@ -1,6 +1,9 @@
 {
     "cSpell.words": [
-        "Tuya"
+        "ssid",
+        "Subdevice",
+        "Tuya",
+        "Zigbee"
     ],
     "java.configuration.updateBuildConfiguration": "automatic"
 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_flutter_smart_lift_sdk/action_sheet.dart' as action_sheet;
-import 'package:poc_flutter_smart_lift_sdk/alert_dialog_cubit.dart';
+import 'package:poc_flutter_smart_lift_sdk/cubit/alert_dialog_cubit.dart';
+import 'package:poc_flutter_smart_lift_sdk/cubit/ui_blocking_cubit.dart';
 import 'package:poc_flutter_smart_lift_sdk/extensions/alert_dialog_convenience_showing.dart';
 import 'package:poc_flutter_smart_lift_sdk/pages/login_page.dart';
 import 'package:poc_flutter_smart_lift_sdk/repositories/tuya_repository.dart';
@@ -23,6 +24,9 @@ void main() {
         providers: [
           BlocProvider<AlertDialogCubit>(
             create: (context) => AlertDialogCubit(),
+          ),
+          BlocProvider<UIBlockingCubit>(
+            create: (context) => UIBlockingCubit(),
           ),
         ],
         child: MaterialApp(

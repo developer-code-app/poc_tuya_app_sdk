@@ -2,18 +2,18 @@ class Device {
   Device({
     required this.deviceId,
     required this.name,
-    required this.roomName,
+    required this.isZigBeeWifi,
   });
 
   factory Device.fromMap(Map map) {
     return Device(
       deviceId: map['device_id'],
       name: map['name'],
-      roomName: map['room_name'],
+      isZigBeeWifi: map['is_zig_bee_wifi'],
     );
   }
 
   final String deviceId;
   final String name;
-  final String roomName;
+  final bool isZigBeeWifi;
 }

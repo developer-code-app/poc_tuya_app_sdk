@@ -106,7 +106,7 @@ class TuyaRepository {
     required String name,
   }) async {
     final argument = {
-      'home_id': deviceId,
+      'device_id': deviceId,
       'name': name,
     };
 
@@ -121,5 +121,77 @@ class TuyaRepository {
     };
 
     return await methodChannel.invokeMethod('removeDevice', argument);
+  }
+
+  Future<String> fetchPairingToken({required String homeId}) async {
+    final argument = {
+      'home_id': homeId,
+    };
+
+    return await methodChannel.invokeMethod('fetchPairingToken', argument);
+  }
+
+  Future<String> startPairingDeviceWithEZMode({
+    required String ssid,
+    required String password,
+    required String token,
+  }) async {
+    final argument = {
+      'ssid': ssid,
+      'password': password,
+      'token': token,
+    };
+
+    return await methodChannel.invokeMethod(
+      'startPairingDeviceWithEZMode',
+      argument,
+    );
+  }
+
+  Future<String> startPairingDeviceWithAPMode({
+    required String ssid,
+    required String password,
+    required String token,
+  }) async {
+    final argument = {
+      'ssid': ssid,
+      'password': password,
+      'token': token,
+    };
+
+    return await methodChannel.invokeMethod(
+      'startPairingDeviceWithAPMode',
+      argument,
+    );
+  }
+
+  Future<String> startPairingDeviceWithZigbeeGateway({
+    required String token,
+  }) async {
+    final argument = {
+      'token': token,
+    };
+
+    return await methodChannel.invokeMethod(
+      'startPairingDeviceWithZigbeeGateway',
+      argument,
+    );
+  }
+
+  Future<String> startPairingDeviceWithSubDevices({
+    required String gatewayId,
+  }) async {
+    final argument = {
+      'gateway_id': gatewayId,
+    };
+
+    return await methodChannel.invokeMethod(
+      'startPairingDeviceWithSubDevices',
+      argument,
+    );
+  }
+
+  Future<void> stopPairingDevice() async {
+    return await methodChannel.invokeMethod('stopPairingDevice');
   }
 }

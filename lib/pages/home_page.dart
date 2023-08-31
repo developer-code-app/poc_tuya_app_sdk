@@ -1,14 +1,21 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:collection/collection.dart';
 import 'package:dfunc/dfunc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:poc_flutter_smart_lift_sdk/alert_dialog_cubit.dart';
+import 'package:poc_flutter_smart_lift_sdk/cubit/alert_dialog_cubit.dart';
+import 'package:poc_flutter_smart_lift_sdk/cubit/ui_blocking_cubit.dart';
 import 'package:poc_flutter_smart_lift_sdk/extensions/alert_dialog_convenience_showing.dart';
+import 'package:poc_flutter_smart_lift_sdk/loading_with_blocking_widget.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/device.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/home.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/project.dart';
 import 'package:poc_flutter_smart_lift_sdk/models/user.dart';
+import 'package:poc_flutter_smart_lift_sdk/pages/device_adding_ap_mode.dart';
+import 'package:poc_flutter_smart_lift_sdk/pages/device_adding_ez_mode.dart';
+import 'package:poc_flutter_smart_lift_sdk/pages/device_adding_zigbee_gateway.dart';
+import 'package:poc_flutter_smart_lift_sdk/pages/device_adding_zigbee_subdevice.dart';
 import 'package:poc_flutter_smart_lift_sdk/pages/login_page.dart';
 import 'package:poc_flutter_smart_lift_sdk/repositories/tuya_repository.dart';
 
@@ -51,17 +58,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: _buildAppBar(context),
       backgroundColor: Colors.blueGrey.shade50,
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          const SizedBox(height: 16),
-          _buildAccountSection(context),
-          const Divider(height: 32),
-          _buildHomeListSection(context),
-          const Divider(height: 32),
-          _buildDeviceListSection(context),
-          const Divider(height: 32),
-        ],
+      body: LoadingWithBlockingWidget(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            const SizedBox(height: 16),
+            _buildAccountSection(context),
+            const Divider(height: 32),
+            _buildHomeListSection(context),
+            const Divider(height: 32),
+            _buildDeviceListSection(context),
+            const Divider(height: 32),
+          ],
+        ),
       ),
     );
   }
@@ -316,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.deepPurpleAccent,
                   ),
                 ),
-                onTap: () {},
+                onTap: () => showAddDeviceAlertDialog(context),
               ),
               const SizedBox(width: 16),
               GestureDetector(
@@ -337,44 +346,49 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 8),
         ...devices
             .map<Widget>(
-              (device) => Row(
-                children: [
-                  Column(
+              (device) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
                     children: [
-                      Text(
-                        device.name,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        device.roomName,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
-                  if (isEditingDeviceList) ...[
-                    const Spacer(),
-                    GestureDetector(
-                      child: const Text(
-                        'Rename',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      onTap: () =>
-                          showEditDeviceAlertDialog(context, device: device),
-                    ),
-                    const SizedBox(width: 16),
-                    GestureDetector(
-                      child: const Text(
-                        'Remove',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.red,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              device.name,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
                       ),
-                      onTap: () => _removeDevice(deviceId: device.deviceId),
-                    ),
-                  ],
-                ],
+                      if (isEditingDeviceList) ...[
+                        const Spacer(),
+                        GestureDetector(
+                          child: const Text(
+                            'Rename',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () => showEditDeviceAlertDialog(context,
+                              device: device),
+                        ),
+                        const SizedBox(width: 16),
+                        GestureDetector(
+                          child: const Text(
+                            'Remove',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.red,
+                            ),
+                          ),
+                          onTap: () => _removeDevice(deviceId: device.deviceId),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
             )
             .intersperse(const SizedBox(height: 12))
@@ -463,8 +477,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void showEditDeviceAlertDialog(BuildContext context,
-      {required Device device}) {
+  void showEditDeviceAlertDialog(
+    BuildContext context, {
+    required Device device,
+  }) {
     final nameController = TextEditingController(text: device.name);
 
     AlertDialogConvenienceShowing.showAlertDialog(
@@ -490,6 +506,117 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void showAddDeviceAlertDialog(BuildContext context) {
+    final alertDialogCubit = context.read<AlertDialogCubit>();
+
+    alertDialogCubit.alertActionSheet(
+      title: 'Device Adding',
+      actions: [
+        AlertAction(
+          'Wi-Fi, EZ Mode',
+          onPressed: () => navigationToDeviceAddingEZMode(),
+        ),
+        AlertAction(
+          'Wi-Fi, AP Mode',
+          onPressed: () => navigationToDeviceAddingAPMode(),
+        ),
+        AlertAction(
+          'Zigbee Gateway',
+          onPressed: () => navigationToDeviceAddingZigbeeGateway(),
+        ),
+        AlertAction(
+          'Zigbee Subdevice',
+          onPressed: () => navigationToDeviceAddingZigbeeSubdevice(),
+        )
+      ],
+    );
+  }
+
+  void navigationToDeviceAddingEZMode() async {
+    final home = currentHome;
+
+    if (home != null) {
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DeviceAddingEZMode(
+            homeId: home.homeId,
+            onAdded: () async {
+              await Future.delayed(const Duration(seconds: 1));
+              _fetchDevices(homeId: home.homeId);
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  void navigationToDeviceAddingAPMode() async {
+    final home = currentHome;
+
+    if (home != null) {
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DeviceAddingAPMode(
+            homeId: home.homeId,
+            onAdded: () async {
+              await Future.delayed(const Duration(seconds: 1));
+              _fetchDevices(homeId: home.homeId);
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  void navigationToDeviceAddingZigbeeGateway() async {
+    final home = currentHome;
+
+    if (home != null) {
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DeviceAddingZigbeeGateway(
+            homeId: home.homeId,
+            onAdded: () async {
+              await Future.delayed(const Duration(seconds: 1));
+              _fetchDevices(homeId: home.homeId);
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  void navigationToDeviceAddingZigbeeSubdevice() async {
+    final home = currentHome;
+    final gatewayId =
+        devices.firstWhereOrNull((element) => element.isZigBeeWifi)?.deviceId;
+
+    if (home != null && gatewayId != null) {
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DeviceAddingZigbeeSubdevice(
+            gatewayId: gatewayId,
+            onAdded: () async {
+              await Future.delayed(const Duration(seconds: 1));
+              _fetchDevices(homeId: home.homeId);
+            },
+          ),
+        ),
+      );
+    }
+  }
   //MARK: Repository
 
   Future<void> _updateNickname(
@@ -498,6 +625,9 @@ class _HomePageState extends State<HomePage> {
   }) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       await repository.updateNickname(nickname: nickname);
@@ -507,12 +637,17 @@ class _HomePageState extends State<HomePage> {
       });
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
   Future<void> _logout(BuildContext context) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       await repository.logout();
@@ -525,12 +660,17 @@ class _HomePageState extends State<HomePage> {
       );
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
   Future<void> _fetchHomes() async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       final homes = await repository.fetchHomes();
@@ -543,6 +683,8 @@ class _HomePageState extends State<HomePage> {
       currentHome?.let((home) => _fetchDevices(homeId: home.homeId));
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
@@ -552,9 +694,12 @@ class _HomePageState extends State<HomePage> {
   }) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
-      final homeId = await repository.addHome(
+      await repository.addHome(
         name: name,
         rooms: rooms,
         location: project.name,
@@ -562,12 +707,11 @@ class _HomePageState extends State<HomePage> {
         longitude: project.longitude,
       );
 
-      setState(() {
-        homes = homes..add(Home(homeId: homeId, name: name));
-        currentHome = homes.firstOrNull;
-      });
+      _fetchHomes();
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
@@ -577,6 +721,9 @@ class _HomePageState extends State<HomePage> {
   }) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       await repository.editHome(
@@ -590,12 +737,17 @@ class _HomePageState extends State<HomePage> {
       _fetchHomes();
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
   Future<void> _removeHome({required String homeId}) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       await repository.removeHome(homeId: homeId);
@@ -603,12 +755,17 @@ class _HomePageState extends State<HomePage> {
       _fetchHomes();
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
   Future<void> _fetchDevices({required String homeId}) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       final devices = await repository.fetchDevices(homeId: homeId);
@@ -618,6 +775,8 @@ class _HomePageState extends State<HomePage> {
       });
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
@@ -627,6 +786,9 @@ class _HomePageState extends State<HomePage> {
   }) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       await repository.editDevice(
@@ -637,12 +799,17 @@ class _HomePageState extends State<HomePage> {
       currentHome?.let((home) => _fetchDevices(homeId: home.homeId));
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 
   Future<void> _removeDevice({required String deviceId}) async {
     final repository = context.read<TuyaRepository>();
     final alertDialogCubit = context.read<AlertDialogCubit>();
+    final uiBlockingCubit = context.read<UIBlockingCubit>();
+
+    uiBlockingCubit.block();
 
     try {
       await repository.removeDevice(deviceId: deviceId);
@@ -650,6 +817,8 @@ class _HomePageState extends State<HomePage> {
       currentHome?.let((home) => _fetchDevices(homeId: home.homeId));
     } on Exception catch (error) {
       alertDialogCubit.errorAlert(error: error);
+    } finally {
+      uiBlockingCubit.unblock();
     }
   }
 }
