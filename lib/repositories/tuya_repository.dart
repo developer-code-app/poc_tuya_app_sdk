@@ -8,19 +8,19 @@ class TuyaRepository {
 
   final MethodChannel methodChannel;
 
-  Future<User> loginWithEmail({
+  Future<User> loginWithUID({
+    required String uid,
     required String countryCode,
-    required String email,
     required String password,
   }) async {
     final argument = {
+      'uid': uid,
       'country_code': countryCode,
-      'email': email,
       'password': password,
     };
 
     return await methodChannel
-        .invokeMethod('loginWithEmail', argument)
+        .invokeMethod('loginWithUID', argument)
         .then((response) => User.fromMap(response));
   }
 

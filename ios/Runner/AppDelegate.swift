@@ -40,8 +40,8 @@ import ThingSmartActivatorKit
     channel.setMethodCallHandler({
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       switch call.method {
-      case "loginWithEmail":
-        self.loginWithEmail(call: call, result: result)
+      case "loginWithUID":
+        self.loginWithUID(call: call, result: result)
       case "updateNickname":
         self.updateNickname(call: call, result: result)
       case "logout":
@@ -105,11 +105,11 @@ import ThingSmartActivatorKit
         })
     }
     
-  private func loginWithEmail(call: FlutterMethodCall, result: @escaping FlutterResult) {
+  private func loginWithUID(call: FlutterMethodCall, result: @escaping FlutterResult) {
     guard
       let args = call.arguments as? Dictionary<String, Any>,
       let countryCode = args["country_code"] as? String,
-      let email = args["email"] as? String,
+      let uid = args["uid"] as? String,
       let password = args["password"] as? String
     else {
       let flutterError = FlutterError(
@@ -121,33 +121,34 @@ import ThingSmartActivatorKit
       return result(flutterError)
     }
       
-    ThingSmartUser.sharedInstance().login(
-      byEmail: countryCode,
-      email: email,
-      password: password
-    ) {
-        let user = ThingSmartUser.sharedInstance()
-        
-        result(
-          [
-            "user_id": user.uid,
-            "session_id": user.sid,
-            "user_name": user.userName,
-            "email": user.email,
-            "nickname": user.nickname
-          ]
+    ThingSmartUser.sharedInstance().loginOrRegister(
+      withCountryCode: countryCode,
+      uid: uid,
+      password: password,
+      createHome: true,
+      success: { (response) in
+          let user = ThingSmartUser.sharedInstance()
+         
+          result(
+            [
+              "user_id": user.uid,
+              "session_id": user.sid,
+              "user_name": user.userName,
+              "email": user.email,
+              "nickname": user.nickname
+            ]
+          );
+      }, failure: { (error) in
+		    let flutterError = FlutterError(
+          code: "LOGIN_ERROR",
+          message: error?.localizedDescription,
+          details: nil
         );
-    } failure: { error in
-      let flutterError = FlutterError(
-        code: "LOGIN_ERROR",
-        message: error?.localizedDescription,
-        details: nil
-      );
   
-      result(flutterError)
-    }
+        result(flutterError)
+      })
   }
-    
+
     private func logout(call: FlutterMethodCall, result: @escaping FlutterResult) {
         ThingSmartUser.sharedInstance().loginOut({
             result("SUCCESS")

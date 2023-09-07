@@ -18,8 +18,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final countryCodeTextController = TextEditingController(text: '66');
-  final emailTextController =
-      TextEditingController(text: 'pattarapon@code-app.com');
+  final uidTextController = TextEditingController(text: 'az1694077932939nDcaA');
   final passwordTextController = TextEditingController(text: 'qweasd');
 
   @override
@@ -47,11 +46,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 16),
                       TextField(
-                        controller: emailTextController,
-                        keyboardType: TextInputType.emailAddress,
+                        controller: uidTextController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Email',
+                          labelText: 'UID',
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -88,9 +86,9 @@ class _LoginPageState extends State<LoginPage> {
     uiBlockingCubit.block();
 
     try {
-      final user = await repository.loginWithEmail(
+      final user = await repository.loginWithUID(
         countryCode: countryCodeTextController.text,
-        email: emailTextController.text,
+        uid: uidTextController.text,
         password: passwordTextController.text,
       );
 

@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_flutter_smart_lift_sdk/cubit/alert_dialog_cubit.dart';
 import 'package:poc_flutter_smart_lift_sdk/cubit/ui_blocking_cubit.dart';
@@ -73,6 +74,12 @@ class _DeviceAddingAPModeState extends State<DeviceAddingAPMode> {
                 ),
                 const Spacer(),
                 Text(token),
+                TextButton(
+                  child: const Text('Copy'),
+                  onPressed: () async {
+                    await Clipboard.setData(ClipboardData(text: token));
+                  },
+                )
               ],
             ),
             const Divider(),
